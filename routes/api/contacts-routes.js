@@ -4,7 +4,7 @@ const contactsController = require("../../controllers/contacts-controller");
 
 const schemes = require("../../schemes/contacts");
 
-const { validateBody } = require("../../decorators");
+const { validateBody, isBodyInRequest } = require("../../decorators");
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.post(
 
 router.put(
   "/:contactId",
-  validateBody(schemes.contactAddScheme),
+  isBodyInRequest(schemes.contactAddScheme),
   contactsController.updateContactById
 );
 
