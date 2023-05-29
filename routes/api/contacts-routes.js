@@ -20,7 +20,8 @@ router.post(
 
 router.put(
   "/:contactId",
-  isBodyInRequest(schemes.contactAddScheme),
+  isBodyInRequest,
+  validateBody(schemes.contactAddScheme),
   contactsController.updateContactById
 );
 
