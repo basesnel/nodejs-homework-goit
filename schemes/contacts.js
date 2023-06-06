@@ -1,5 +1,7 @@
 const Joi = require("joi");
 
+const { emailRegexp, phoneRegexp } = require("../constants/contacts");
+
 const messages = {
   required: "missing required {{#label}} field",
   noPattern: "invalid {{#label}}, must be",
@@ -13,7 +15,7 @@ const contactAddScheme = Joi.object({
   }),
   email: Joi.string()
     .required()
-    .pattern(new RegExp(/\S+@\S+\.\S+/))
+    .pattern(new RegExp(emailRegexp))
     .messages({
       "string.pattern.base": `${messages.noPattern} (i.e): example@domain.tld`,
       "any.required": messages.required,
@@ -21,14 +23,20 @@ const contactAddScheme = Joi.object({
     }),
   phone: Joi.string()
     .required()
-    .pattern(new RegExp(/[(]?\d{3}[)]? \d{3}-\d{4}/))
+    .pattern(new RegExp(phoneRegexp))
     .messages({
       "string.pattern.base": `${messages.noPattern}: (000) 000-0000`,
       "any.required": messages.required,
       "string.empty": messages.empty,
     }),
+  favorite: Joi.boolean(),
+});
+
+const contactUpdateFavoriteSchema = Joi.object({
+  favorite: Joi.boolean().required(),
 });
 
 module.exports = {
   contactAddScheme,
+  contactUpdateFavoriteSchema,
 };
