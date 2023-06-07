@@ -18,7 +18,11 @@ router.get("/", contactsController.getAllContacts);
 
 router.get("/:contactId", isValidId, contactsController.getContactById);
 
-router.post("/", contactsController.addContact);
+router.post(
+  "/",
+  validateBody(schemes.contactAddScheme),
+  contactsController.addContact
+);
 
 router.put(
   "/:contactId",
