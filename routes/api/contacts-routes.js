@@ -10,9 +10,12 @@ const {
   isValidId,
   isBodyInRequest,
   isBodyFavoriteInRequest,
+  authenticate,
 } = require("../../middlewares");
 
 const router = express.Router();
+
+router.use(authenticate);
 
 router.get("/", contactsController.getAllContacts);
 
