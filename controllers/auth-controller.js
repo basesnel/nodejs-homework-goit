@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const User = require("../models/user");
+const User = require("../models/users");
 
 const { HttpError } = require("../helpers");
 
@@ -31,15 +31,15 @@ const signin = async (req, res) => {
 
   const user = await User.findOne({ email });
   if (!user) {
-    throw HttpError(401);
+    throw HttpError(401, `Email or password is wrong`);
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {
-    throw HttpError(401);
+    throw HttpError(401, `Email or password is wrong`);
   }
 
-  const { _id: id } = user;
+  const { _id: id, subscription } = user;
 
   const payload = {
     id: user._id,
@@ -50,15 +50,16 @@ const signin = async (req, res) => {
 
   res.json({
     token,
+    user: { email, subscription },
   });
 };
 
 const getCurrent = async (req, res) => {
-  const { name, email } = req.user;
+  const { email, subscription } = req.user;
 
   res.json({
-    name,
     email,
+    subscription,
   });
 };
 
@@ -66,9 +67,10 @@ const logout = async (req, res) => {
   const { _id } = req.user;
   await User.findByIdAndUpdate(_id, { token: "" });
 
-  res.json({
-    message: "Logout success",
-  });
+  res.status(204).json({});
+  // res.json({
+  //   message: "Logout success",
+  // });
 };
 
 module.exports = {

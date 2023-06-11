@@ -11,13 +11,13 @@ const { authenticate } = require("../../middlewares");
 const router = express.Router();
 
 router.post(
-  "/signup",
+  "/register",
   validateBody(schemas.userRegisterSchema),
   authController.signup
 );
 
 router.post(
-  "/signin",
+  "/login",
   validateBody(schemas.userLoginSchema),
   authController.signin
 );
