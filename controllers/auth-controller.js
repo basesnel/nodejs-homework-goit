@@ -79,7 +79,11 @@ const updateSubscriptionUser = async (req, res) => {
   if (!user) {
     throw HttpError(404, `Not found`);
   }
-  res.json(user);
+  const { email, subscription } = user;
+  res.json({
+    email,
+    subscription,
+  });
 };
 
 module.exports = {
