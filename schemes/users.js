@@ -3,7 +3,7 @@ const Joi = require("joi");
 const { emailRegexp } = require("../constants/users");
 
 const userRegisterSchema = Joi.object({
-  name: Joi.string().required(),
+  name: Joi.string(),
   email: Joi.string().pattern(emailRegexp).required(),
   password: Joi.string().min(6).required(),
   subscription: Joi.string()
