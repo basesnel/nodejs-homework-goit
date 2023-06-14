@@ -10,15 +10,22 @@ const {
   isValidId,
   isBodyInRequest,
   isBodyFavoriteInRequest,
+  authenticate,
 } = require("../../middlewares");
 
 const router = express.Router();
+
+router.use(authenticate);
 
 router.get("/", contactsController.getAllContacts);
 
 router.get("/:contactId", isValidId, contactsController.getContactById);
 
-router.post("/", contactsController.addContact);
+router.post(
+  "/",
+  validateBody(schemes.contactAddScheme),
+  contactsController.addContact
+);
 
 router.put(
   "/:contactId",

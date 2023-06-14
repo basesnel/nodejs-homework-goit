@@ -1,8 +1,8 @@
 const { Schema, model } = require("mongoose");
 
-const { handleMongooseError } = require("../middlewares");
+const { handleMongooseError } = require("../helpers");
 
-const { emailRegexp, phoneRegexp } = require("../constants/contacts");
+// const { emailRegexp, phoneRegexp } = require("../constants/contacts");
 
 const contactSchema = new Schema(
   {
@@ -12,17 +12,22 @@ const contactSchema = new Schema(
     },
     email: {
       type: String,
-      match: emailRegexp,
+      // match: emailRegexp,
       required: true,
     },
     phone: {
       type: String,
-      match: phoneRegexp,
+      // match: phoneRegexp,
       required: true,
     },
     favorite: {
       type: Boolean,
       default: false,
+    },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
     },
   },
   { versionKey: false }
