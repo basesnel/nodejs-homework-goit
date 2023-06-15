@@ -6,12 +6,13 @@ const schemas = require("../../schemes/users");
 
 const { validateBody } = require("../../decorators");
 
-const { authenticate } = require("../../middlewares");
+const { authenticate, upload } = require("../../middlewares");
 
 const router = express.Router();
 
 router.post(
   "/register",
+  upload.single("avatarURL"),
   validateBody(schemas.userRegisterSchema),
   authController.signup
 );
