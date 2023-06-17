@@ -12,7 +12,6 @@ const router = express.Router();
 
 router.post(
   "/register",
-  upload.single("avatarURL"),
   validateBody(schemas.userRegisterSchema),
   authController.signup
 );
@@ -32,6 +31,14 @@ router.patch(
   authenticate,
   validateBody(schemas.userSubscriptionSchema),
   authController.updateSubscriptionUser
+);
+
+router.patch(
+  "/avatars",
+  authenticate,
+  upload.single("avatarURL"),
+  validateBody(schemas.userAvatarSchema),
+  authController.updateAvatarUser
 );
 
 module.exports = router;

@@ -1,5 +1,10 @@
+const fs = require("fs/promises");
+const path = require("path");
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
+const jimp = require("jimp");
 
 const User = require("../models/users");
 
@@ -8,6 +13,8 @@ const { HttpError } = require("../helpers");
 const { ctrlWrapper } = require("../decorators");
 
 const { SECRET_KEY } = process.env;
+
+const avatarsDir = path.resolve("public", "avatars");
 
 const signup = async (req, res) => {
   const { email, password } = req.body;
@@ -18,7 +25,13 @@ const signup = async (req, res) => {
 
   const hashPassword = await bcrypt.hash(password, 10);
 
-  const newUser = await User.create({ ...req.body, password: hashPassword });
+  const avatarURL = gravatar.url(email, { protocol: "https", d: "identicon" });
+
+  const newUser = await User.create({
+    ...req.body,
+    password: hashPassword,
+    avatarURL,
+  });
 
   res.status(201).json({
     user: {
@@ -81,11 +94,32 @@ const updateSubscriptionUser = async (req, res) => {
   if (!user) {
     throw HttpError(404, `Not found`);
   }
+
   const { email, subscription } = user;
   res.json({
     email,
     subscription,
   });
+};
+
+const updateAvatarUser = async (req, res) => {
+  const { path: oldPath, filename } = req.file;
+  const newPath = path.join(avatarsDir, filename);
+  const avatarURL = path.join("avatars", filename);
+
+  const image = await jimp.read(oldPath);
+  await image.resize(250, 250, jimp.RESIZE_BEZIER);
+  await image.writeAsync(oldPath);
+
+  fs.rename(oldPath, newPath);
+
+  const { _id } = req.user;
+  const user = await User.findByIdAndUpdate(_id, { avatarURL }, { new: true });
+  if (!user) {
+    throw HttpError(404, `Not found`);
+  }
+
+  res.status(200).json({ avatarURL });
 };
 
 module.exports = {
@@ -94,4 +128,5 @@ module.exports = {
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
   updateSubscriptionUser: ctrlWrapper(updateSubscriptionUser),
+  updateAvatarUser: ctrlWrapper(updateAvatarUser),
 };
