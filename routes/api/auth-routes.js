@@ -16,6 +16,14 @@ router.post(
   authController.signup
 );
 
+router.get("/verify/:verificationCode", authController.verify);
+
+router.post(
+  "/verify",
+  validateBody(schemas.userEmailSchema),
+  authController.resendVerify
+);
+
 router.post(
   "/login",
   validateBody(schemas.userLoginSchema),
